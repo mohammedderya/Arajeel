@@ -1,0 +1,95 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@300;400;500;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  overflow-x: hidden;
+}
+
+body {
+  min-height: 100vh;
+  background-color: #101311;
+  color: #F5EEE2;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: 'Tajawal', 'Cairo', Tahoma, sans-serif;
+  overflow-x: hidden;
+}
+
+@layer components {
+  .btn-gold {
+    @apply rounded-xl px-7 py-3.5 font-bold transition-all;
+    background-color: #D5AB57;
+    color: #101311;
+  }
+  .btn-gold:hover {
+    background-color: #F0D18A;
+    transform: scale(1.02);
+  }
+  .btn-gold:active {
+    transform: scale(0.98);
+  }
+
+  .btn-gold-outline {
+    @apply rounded-xl border-2 px-7 py-3.5 font-bold transition-all;
+    border-color: #D5AB5766;
+    color: #D5AB57;
+  }
+  .btn-gold-outline:hover {
+    background-color: #D5AB57;
+    color: #101311;
+  }
+
+  .btn-social-whatsapp {
+    @apply rounded-xl px-6 py-3.5 font-bold text-white flex items-center justify-center gap-2 transition;
+    background-color: #25D366;
+  }
+  .btn-social-whatsapp:hover {
+    filter: brightness(1.1);
+  }
+
+  .btn-social-instagram {
+    @apply rounded-xl px-6 py-3.5 font-bold text-white flex items-center justify-center gap-2 transition;
+    background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+  }
+  .btn-social-instagram:hover {
+    filter: brightness(1.1);
+  }
+
+  .btn-social-facebook {
+    @apply rounded-xl px-6 py-3.5 font-bold text-white flex items-center justify-center gap-2 transition;
+    background-color: #1877F2;
+  }
+  .btn-social-facebook:hover {
+    filter: brightness(1.1);
+  }
+
+  .card {
+    @apply rounded-2xl overflow-hidden transition-all;
+    background-color: #202622;
+    border: 1px solid #2A3028;
+  }
+  .card:hover {
+    border-color: #D5AB5733;
+    box-shadow: 0 0 30px #D5AB5710;
+  }
+
+  .section-title {
+    font-family: 'Cairo', 'Amiri', serif;
+    @apply text-3xl md:text-4xl font-bold;
+  }
+
+  .gold-divider {
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(to right, transparent, #D5AB57, transparent);
+  }
+}

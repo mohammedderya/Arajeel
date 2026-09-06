@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
+model Category {
+  id       Int       @id @default(autoincrement())
+  name     String
+  slug     String    @unique
+  imageUrl String?
+
+  // Restrict prevents deleting a category while products still reference it.
+  products Product[]
+}
+
+model Product {
+  id          Int            @id @default(autoincrement())
+  name        String
+  description String
+  price       Decimal
+  categoryId  Int
+  inStock     Boolean        @default(true)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  // Restrict preserves product classification and prevents orphaned products.
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  // Cascade removes image metadata when its product is intentionally deleted.
+  images   ProductImage[]
+
+  @@index([categoryId])
+}
+
+model ProductImage {
+  id        Int     @id @default(autoincrement())
+  productId Int
+  url       String
+  isPrimary Boolean @default(false)
+  sortOrder Int     @default(0)
+
+  // Cascade removes useless image rows when their product is deleted.
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+}

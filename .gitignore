@@ -1,0 +1,14 @@
+node_modules/
+.next/
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Prisma and local tooling output
+*.log
+*.tsbuildinfo
+
+# Uploaded files
+public/uploads/
+
