@@ -8,6 +8,8 @@ node_modules/
 # Prisma and local tooling output
 *.log
 *.tsbuildinfo
+*.db
+*.db-journal
 
 # Uploaded files
 public/uploads/
