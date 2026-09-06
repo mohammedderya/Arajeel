@@ -4,6 +4,7 @@ import { SiteHeader } from "@/components/storefront/site-header";
 import { ProductGallery } from "@/components/storefront/product-gallery";
 import { ProductCard } from "@/components/storefront/product-card";
 import { AddToCartButton } from "@/components/storefront/add-to-cart-button";
+import { DirectBuyButton } from "@/components/storefront/direct-buy-button";
 import { Footer } from "@/components/storefront/footer";
 import { getProductPage, getFeaturedProducts } from "@/lib/storefront";
 import { entityIdSchema } from "@/lib/dashboard-schemas";
@@ -62,15 +63,17 @@ export default async function ProductPage({ params }: { params: { id: string } }
             <p className="text-muted leading-relaxed mb-8 whitespace-pre-line">{product.description}</p>
 
             <div className="space-y-3">
+              <DirectBuyButton
+                id={product.id}
+                name={product.name}
+                price={formattedPrice}
+              />
               <AddToCartButton
                 id={product.id}
                 name={product.name}
                 price={formattedPrice}
                 image={product.images[0]?.url ?? null}
               />
-              <button className="w-full rounded-xl border border-border py-3 font-bold text-muted transition hover:border-gold hover:text-gold flex items-center justify-center gap-2">
-                <span>♡</span> أضف إلى المفضلة
-              </button>
             </div>
           </div>
         </div>

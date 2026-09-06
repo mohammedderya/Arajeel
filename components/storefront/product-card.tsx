@@ -3,6 +3,7 @@
 import Link from "next/link";
 import type { ProductSummary } from "@/lib/storefront";
 import { AddToCartButton } from "@/components/storefront/add-to-cart-button";
+import { DirectBuyButton } from "@/components/storefront/direct-buy-button";
 
 function formatPrice(price: string) {
   return `${Number(price).toFixed(0)} ₪`;
@@ -14,7 +15,7 @@ export function ProductCard({ product, index = 0 }: { product: ProductSummary; i
   const badge = index < badges.length ? badges[index] : null;
 
   return (
-    <article className="group rounded-2xl overflow-hidden border border-border bg-bg-card hover:border-gold/30 transition-all duration-300">
+    <article className="group rounded-2xl overflow-hidden border border-border bg-bg-card hover:border-gold/30 transition-all duration-300 flex flex-col justify-between">
       <Link href={`/products/${product.id}`} className="block">
         <div className="relative h-[180px] md:h-[200px] overflow-hidden bg-bg-hover">
           {product.thumbnailUrl ? (
@@ -47,12 +48,20 @@ export function ProductCard({ product, index = 0 }: { product: ProductSummary; i
           <span className="text-gold font-extrabold text-lg">{formatPrice(product.price)}</span>
         </div>
       </Link>
-      <div className="px-3 pb-3">
+      <div className="px-3 pb-3 flex items-center gap-2">
+        <DirectBuyButton
+          id={product.id}
+          name={product.name}
+          price={formatPrice(product.price)}
+          compact
+          className="flex-1"
+        />
         <AddToCartButton
           id={product.id}
           name={product.name}
           price={product.price}
           image={product.thumbnailUrl ?? null}
+          compact
         />
       </div>
     </article>
