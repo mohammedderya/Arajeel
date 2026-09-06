@@ -21,5 +21,15 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
 export async function DELETE(_request: NextRequest, { params }: { params: { id: string } }) {
   if (!await requireAdmin()) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  try { const id = entityIdSchema.parse(params.id); await prisma.product.delete({ where: { id } }); return NextResponse.json({ success: true }); } catch { return NextResponse.json({ error: "Unable to delete product" }, { status: 400 }); }
+  try {
+    const id = entityIdSchema.parse(params.id);
+    await prisma.$transaction(async (tx) => {
+      await tx.productImage.deleteMany({ where: { productId: id } });
+      await tx.product.delete({ where: { id } });
+    });
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Delete product error:", error);
+    return NextResponse.json({ error: "Unable to delete product" }, { status: 400 });
+  }
 }

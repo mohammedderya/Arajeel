@@ -2,21 +2,27 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ConfirmModal } from "@/components/dashboard/confirm-modal";
 
 type Product = { id: number; name: string; price: string; inStock: boolean; createdAt: string; category: { name: string }; images: { url: string }[] };
 
 export function ProductsTable({ products }: { products: Product[] }) {
   const router = useRouter();
+  const [items, setItems] = useState<Product[]>(products);
   const [search, setSearch] = useState("");
   const [catFilter, setCatFilter] = useState("");
   const [page, setPage] = useState(1);
   const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [errorMsg, setErrorMsg] = useState("");
   const perPage = 10;
 
-  const categories = [...new Set(products.map(p => p.category.name))];
-  const filtered = products
+  useEffect(() => {
+    setItems(products);
+  }, [products]);
+
+  const categories = [...new Set(items.map(p => p.category.name))];
+  const filtered = items
     .filter(p => !search || p.name.includes(search))
     .filter(p => !catFilter || p.category.name === catFilter);
   const totalPages = Math.ceil(filtered.length / perPage);
@@ -24,13 +30,34 @@ export function ProductsTable({ products }: { products: Product[] }) {
 
   async function confirmDelete() {
     if (!deleteId) return;
-    const res = await fetch(`/api/products/${deleteId}`, { method: "DELETE" });
-    if (res.ok) router.refresh();
-    setDeleteId(null);
+    setErrorMsg("");
+    try {
+      const res = await fetch(`/api/products/${deleteId}`, { method: "DELETE" });
+      if (res.ok) {
+        setItems(prev => prev.filter(p => p.id !== deleteId));
+        router.refresh();
+      } else {
+        const data = await res.json().catch(() => null);
+        if (res.status === 401) {
+          setErrorMsg("انتهت جلسة تسجيل الدخول. يرجى تسجيل الخروج وتسجيل الدخول مجدداً بالبيانات الجديدة.");
+        } else {
+          setErrorMsg(data?.error ?? "تعذر حذف المنتج.");
+        }
+      }
+    } catch {
+      setErrorMsg("حدث خطأ في الاتصال بالخادم أثناء الحذف.");
+    } finally {
+      setDeleteId(null);
+    }
   }
 
   return (
     <div>
+      {errorMsg && (
+        <div className="mb-4 rounded-xl border border-red-500/40 bg-red-500/10 p-4 text-center text-sm font-semibold text-red-400">
+          {errorMsg}
+        </div>
+      )}
       <div className="flex flex-col sm:flex-row gap-3 mb-5">
         <input
           value={search}
