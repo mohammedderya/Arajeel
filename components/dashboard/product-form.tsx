@@ -30,18 +30,25 @@ export function ProductForm({ categories, product }: { categories: Category[]; p
       const uploaded: Image[] = [];
       for (const file of validFiles) {
         const signRes = await fetch("/api/uploads/sign", { method: "POST" });
+        if (signRes.status === 401) throw new Error("unauthorized");
         if (!signRes.ok) throw new Error("sign_failed");
         const { uploadUrl } = await signRes.json();
         const body = new FormData();
         body.append("file", file);
         const uploadRes = await fetch(uploadUrl, { method: "POST", body });
+        if (uploadRes.status === 401) throw new Error("unauthorized");
         const result = await uploadRes.json();
-        if (!result.secure_url) throw new Error("upload_failed");
+        if (!result.secure_url) throw new Error(result.error || "upload_failed");
         uploaded.push({ url: result.secure_url, isPrimary: images.length === 0 && uploaded.length === 0, sortOrder: images.length + uploaded.length });
       }
       setImages((c) => [...c, ...uploaded]);
-    } catch {
-      setErrors({ images: "تعذر رفع الصور. حاول مرة أخرى." });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "";
+      if (msg === "unauthorized") {
+        setErrors({ images: "انتهت جلسة تسجيل الدخول. يرجى تسجيل الخروج والدخول مجدداً بالبيانات الجديدة." });
+      } else {
+        setErrors({ images: "تعذر رفع الصور. تأكد من أن حجم الصورة أقل من 5MB وحاول مرة أخرى." });
+      }
     } finally {
       setBusy(false);
       event.target.value = "";

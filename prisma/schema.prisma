@@ -54,3 +54,10 @@ model ProductImage {
 
   @@index([productId])
 }
+
+model Upload {
+  id        String   @id
+  data      String
+  mimeType  String
+  createdAt DateTime @default(now())
+}
